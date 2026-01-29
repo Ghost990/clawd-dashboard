@@ -8,7 +8,12 @@ export const metadata = {
 export default function BernardChat() {
   return (
     <div className="h-[calc(100vh-3.5rem)]">
-      <ChatEmbed botName="Bernard" port={19001} />
+      <ChatEmbed 
+        botName="Bernard" 
+        port={19001} 
+        emoji="🔧"
+        description="Your dev partner — coder, thinker, collaborator"
+      />
     </div>
   );
 }

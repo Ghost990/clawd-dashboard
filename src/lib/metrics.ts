@@ -39,11 +39,13 @@ export async function getSystemMetrics(): Promise<MetricsResponse> {
     temperature: cpuTemp.main !== null ? cpuTemp.main : undefined,
   };
 
+  // Use 'active' memory for more accurate usage (excludes buffers/cache)
+  const actualUsed = mem.active || mem.used;
   const memoryMetrics: MemoryMetrics = {
     total: mem.total,
-    used: mem.used,
-    free: mem.free,
-    usagePercent: Math.round((mem.used / mem.total) * 1000) / 10,
+    used: actualUsed,
+    free: mem.available || mem.free,
+    usagePercent: Math.round((actualUsed / mem.total) * 1000) / 10,
     swapTotal: mem.swaptotal,
     swapUsed: mem.swapused,
   };

@@ -1,55 +1,64 @@
 'use client';
 
-import { useState } from 'react';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 interface ChatEmbedProps {
   botName: string;
   port: number;
+  description?: string;
+  emoji?: string;
 }
 
-export function ChatEmbed({ botName, port }: ChatEmbedProps) {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
+export function ChatEmbed({ botName, port, description, emoji = '🤖' }: ChatEmbedProps) {
   const url = `http://127.0.0.1:${port}`;
 
-  return (
-    <div className="h-full relative">
-      {loading && (
-        <div className="absolute inset-0 bg-slate-900 flex items-center justify-center">
-          <div className="text-center">
-            <Skeleton className="w-12 h-12 rounded-full mx-auto mb-4 bg-slate-800" />
-            <p className="text-slate-400">Loading {botName}...</p>
-          </div>
-        </div>
-      )}
-      
-      {error && (
-        <div className="absolute inset-0 bg-slate-900 flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-red-500 mb-2">Failed to load {botName}</p>
-            <p className="text-slate-500 text-sm mb-4">
-              Make sure the service is running on port {port}
-            </p>
-            <code className="text-xs bg-slate-800 px-2 py-1 rounded text-slate-400">
-              systemctl status clawdbot-{botName.toLowerCase()}
-            </code>
-          </div>
-        </div>
-      )}
+  const openChat = () => {
+    window.open(url, `${botName}-chat`, 'width=800,height=600');
+  };
 
-      <iframe
-        src={url}
-        className="w-full h-full border-0"
-        onLoad={() => setLoading(false)}
-        onError={() => {
-          setLoading(false);
-          setError(true);
-        }}
-        title={`${botName} Chat`}
-        allow="microphone; clipboard-write"
-      />
+  return (
+    <div className="h-full flex items-center justify-center p-6">
+      <Card className="bg-slate-900 border-slate-800 max-w-md w-full">
+        <CardHeader className="text-center pb-2">
+          <div className="text-6xl mb-4">{emoji}</div>
+          <CardTitle className="text-2xl text-white">{botName}</CardTitle>
+          {description && (
+            <p className="text-slate-400 text-sm mt-2">{description}</p>
+          )}
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-center gap-2 text-sm text-slate-500">
+            <Badge variant="outline" className="border-slate-700">
+              Port {port}
+            </Badge>
+            <span>•</span>
+            <span className="font-mono">{url}</span>
+          </div>
+          
+          <div className="flex flex-col gap-2">
+            <Button 
+              onClick={openChat}
+              className="w-full bg-cyan-600 hover:bg-cyan-700"
+            >
+              Open Chat in New Window
+            </Button>
+            <a 
+              href={url} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-center text-sm text-slate-400 hover:text-white transition-colors"
+            >
+              Or open in new tab →
+            </a>
+          </div>
+
+          <p className="text-xs text-slate-600 text-center">
+            The Clawdbot UI requires authentication, so iframe embedding is not supported.
+          </p>
+        </CardContent>
+      </Card>
     </div>
   );
 }
