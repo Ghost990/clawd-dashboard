@@ -1,6 +1,5 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 interface MetricCardProps {
@@ -13,70 +12,78 @@ interface MetricCardProps {
 }
 
 function getColorClass(percent: number): string {
-  if (percent >= 90) return 'text-red-500';
-  if (percent >= 75) return 'text-orange-500';
-  if (percent >= 50) return 'text-yellow-500';
-  return 'text-green-500';
+  if (percent >= 90) return 'text-red-400';
+  if (percent >= 75) return 'text-orange-400';
+  if (percent >= 50) return 'text-yellow-400';
+  return 'text-cyan-400';
 }
 
-function getProgressColor(percent: number): string {
-  if (percent >= 90) return 'bg-red-500';
-  if (percent >= 75) return 'bg-orange-500';
-  if (percent >= 50) return 'bg-yellow-500';
-  return 'bg-green-500';
+function getStrokeColor(percent: number): string {
+  if (percent >= 90) return '#f87171';
+  if (percent >= 75) return '#fb923c';
+  if (percent >= 50) return '#facc15';
+  return '#00d4ff';
+}
+
+function getGaugeClass(percent: number): string {
+  if (percent >= 90) return 'gauge-red';
+  if (percent >= 75) return 'gauge-orange';
+  if (percent >= 50) return 'gauge-yellow';
+  return 'gauge-green';
 }
 
 export function MetricCard({ title, value, maxValue = 100, unit = '%', icon, subtitle }: MetricCardProps) {
   const percent = Math.min((value / maxValue) * 100, 100);
-  const radius = 40;
+  const radius = 45;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (percent / 100) * circumference;
 
   return (
-    <Card className="bg-slate-900 border-slate-800">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium text-slate-400 flex items-center gap-2">
-          {icon && <span className="text-lg">{icon}</span>}
-          {title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="flex items-center justify-between">
-        <div className="relative w-24 h-24">
-          <svg className="w-24 h-24 transform -rotate-90">
+    <div className="glass-card rounded-2xl p-6 gradient-border hover:scale-[1.02] transition-transform">
+      <div className="flex items-center gap-2 mb-4">
+        {icon && <span className="text-2xl">{icon}</span>}
+        <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">{title}</h3>
+      </div>
+      
+      <div className="flex items-center justify-between">
+        <div className={cn("relative w-28 h-28", getGaugeClass(percent))}>
+          <svg className="w-28 h-28 transform -rotate-90">
+            {/* Background circle */}
             <circle
-              cx="48"
-              cy="48"
+              cx="56"
+              cy="56"
               r={radius}
               fill="none"
-              stroke="currentColor"
-              strokeWidth="8"
-              className="text-slate-800"
+              stroke="rgba(255,255,255,0.1)"
+              strokeWidth="10"
             />
+            {/* Progress circle */}
             <circle
-              cx="48"
-              cy="48"
+              cx="56"
+              cy="56"
               r={radius}
               fill="none"
-              stroke="currentColor"
-              strokeWidth="8"
+              stroke={getStrokeColor(percent)}
+              strokeWidth="10"
               strokeLinecap="round"
               strokeDasharray={circumference}
               strokeDashoffset={strokeDashoffset}
-              className={cn('transition-all duration-500', getProgressColor(percent))}
+              className="transition-all duration-700 ease-out"
             />
           </svg>
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className={cn('text-xl font-bold', getColorClass(percent))}>
-              {Math.round(value)}{unit}
+            <span className={cn('metric-value-sm', getColorClass(percent))}>
+              {Math.round(value)}<span className="text-lg">{unit}</span>
             </span>
           </div>
         </div>
+        
         {subtitle && (
-          <div className="text-right">
-            <p className="text-xs text-slate-500">{subtitle}</p>
+          <div className="text-right flex-1 ml-4">
+            <p className="text-sm text-slate-500 leading-relaxed">{subtitle}</p>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

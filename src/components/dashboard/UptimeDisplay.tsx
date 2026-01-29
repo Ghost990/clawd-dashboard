@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface UptimeDisplayProps {
   initialUptime: number;
@@ -32,35 +31,32 @@ export function UptimeDisplay({ initialUptime }: UptimeDisplayProps) {
   const { days, hours, minutes, secs } = formatUptime(uptime);
 
   return (
-    <Card className="bg-slate-900 border-slate-800">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium text-slate-400 flex items-center gap-2">
-          <span className="text-lg">⏱️</span>
-          Uptime
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="flex gap-3 text-center">
-          {days > 0 && (
-            <div>
-              <div className="text-2xl font-bold text-white">{days}</div>
-              <div className="text-xs text-slate-500">days</div>
-            </div>
-          )}
-          <div>
-            <div className="text-2xl font-bold text-white">{String(hours).padStart(2, '0')}</div>
-            <div className="text-xs text-slate-500">hours</div>
+    <div className="glass-card rounded-2xl p-6 gradient-border hover:scale-[1.02] transition-transform">
+      <div className="flex items-center gap-2 mb-4">
+        <span className="text-2xl">⏱️</span>
+        <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">Uptime</h3>
+      </div>
+      
+      <div className="flex gap-3">
+        {days > 0 && (
+          <div className="text-center">
+            <div className="metric-value-sm text-white">{days}</div>
+            <div className="text-xs text-slate-500 font-medium uppercase">Days</div>
           </div>
-          <div>
-            <div className="text-2xl font-bold text-white">{String(minutes).padStart(2, '0')}</div>
-            <div className="text-xs text-slate-500">min</div>
-          </div>
-          <div>
-            <div className="text-2xl font-bold text-cyan-400 font-mono">{String(secs).padStart(2, '0')}</div>
-            <div className="text-xs text-slate-500">sec</div>
-          </div>
+        )}
+        <div className="text-center">
+          <div className="metric-value-sm text-white">{String(hours).padStart(2, '0')}</div>
+          <div className="text-xs text-slate-500 font-medium uppercase">Hours</div>
         </div>
-      </CardContent>
-    </Card>
+        <div className="text-center">
+          <div className="metric-value-sm text-white">{String(minutes).padStart(2, '0')}</div>
+          <div className="text-xs text-slate-500 font-medium uppercase">Min</div>
+        </div>
+        <div className="text-center">
+          <div className="metric-value-sm text-cyan-400 font-mono glow-text-cyan animate-pulse-glow">{String(secs).padStart(2, '0')}</div>
+          <div className="text-xs text-slate-500 font-medium uppercase">Sec</div>
+        </div>
+      </div>
+    </div>
   );
 }

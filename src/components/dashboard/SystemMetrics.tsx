@@ -4,7 +4,6 @@ import { useEffect, useState, useCallback } from 'react';
 import { MetricCard } from './MetricCard';
 import { UptimeDisplay } from './UptimeDisplay';
 import { SystemInfo } from './SystemInfo';
-import { Skeleton } from '@/components/ui/skeleton';
 import type { MetricsResponse } from '@/types/metrics';
 
 function formatBytes(bytes: number): string {
@@ -12,6 +11,27 @@ function formatBytes(bytes: number): string {
   if (gb >= 1) return `${gb.toFixed(1)} GB`;
   const mb = bytes / (1024 * 1024);
   return `${mb.toFixed(0)} MB`;
+}
+
+function LoadingSkeleton() {
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="glass-card rounded-2xl p-6 animate-pulse">
+            <div className="h-4 w-20 bg-white/10 rounded mb-4"></div>
+            <div className="flex items-center gap-4">
+              <div className="w-28 h-28 rounded-full bg-white/10"></div>
+              <div className="flex-1 space-y-2">
+                <div className="h-3 w-full bg-white/10 rounded"></div>
+                <div className="h-3 w-2/3 bg-white/10 rounded"></div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export function SystemMetrics() {
@@ -40,24 +60,19 @@ export function SystemMetrics() {
   }, [fetchMetrics]);
 
   if (loading) {
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {[...Array(4)].map((_, i) => (
-          <Skeleton key={i} className="h-40 bg-slate-800" />
-        ))}
-      </div>
-    );
+    return <LoadingSkeleton />;
   }
 
   if (error) {
     return (
-      <div className="text-center py-8">
-        <p className="text-red-500">Error: {error}</p>
+      <div className="glass-card rounded-2xl p-8 text-center">
+        <p className="text-red-400 text-lg font-semibold mb-2">Connection Error</p>
+        <p className="text-slate-500 mb-4">{error}</p>
         <button 
           onClick={fetchMetrics}
-          className="mt-4 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded text-white"
+          className="px-6 py-3 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/30 rounded-xl text-cyan-400 font-semibold transition-all"
         >
-          Retry
+          Retry Connection
         </button>
       </div>
     );
@@ -69,7 +84,8 @@ export function SystemMetrics() {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Main metrics grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <MetricCard
           title="CPU Usage"
           value={metrics.cpu.usage}
@@ -93,15 +109,33 @@ export function SystemMetrics() {
         <UptimeDisplay initialUptime={metrics.system.uptime} />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      {/* System info section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <SystemInfo system={metrics.system} network={metrics.network} />
         
-        {metrics.cpu.temperature && (
-          <div className="bg-slate-900 border border-slate-800 rounded-lg p-4">
-            <h3 className="text-sm font-medium text-slate-400 mb-2">🌡️ Temperature</h3>
-            <p className="text-2xl font-bold text-white">{metrics.cpu.temperature}°C</p>
+        {/* Temperature card */}
+        <div className="glass-card rounded-2xl p-6 gradient-border">
+          <div className="flex items-center gap-2 mb-6">
+            <span className="text-2xl">🌡️</span>
+            <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">CPU Temperature</h3>
           </div>
-        )}
+          
+          {metrics.cpu.temperature ? (
+            <div className="flex items-baseline gap-2">
+              <span className="metric-value text-white">{metrics.cpu.temperature}</span>
+              <span className="text-2xl text-slate-500">°C</span>
+            </div>
+          ) : (
+            <p className="text-slate-500">Temperature sensor not available</p>
+          )}
+          
+          <div className="mt-4 pt-4 border-t border-white/5">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-slate-500">CPU Model</span>
+              <span className="text-white font-medium">{metrics.cpu.model}</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
