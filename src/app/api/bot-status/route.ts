@@ -55,7 +55,7 @@ export async function GET(request: NextRequest) {
 
     // Get skills based on service
     let skills: string[] = [];
-    if (service === 'clawdbot-bernard') {
+    if (service === 'openclaw-bernard') {
       const { stdout: skillsOut } = await execAsync(`ls /home/ankyr/clawd/skills 2>/dev/null || echo ""`);
       skills = skillsOut.trim().split('\n').filter(Boolean);
     }

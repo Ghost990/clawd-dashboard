@@ -7,7 +7,7 @@ import { MiniMetrics } from '@/components/dashboard/MiniMetrics';
 const bots = [
   {
     name: 'Bernard',
-    serviceName: 'clawdbot-bernard',
+    serviceName: 'openclaw-bernard',
     port: 19001,
     emoji: '🔧',
     description: 'Dev partner — coder, thinker, collaborator',
@@ -16,11 +16,11 @@ const bots = [
   },
   {
     name: 'Moni',
-    serviceName: 'clawdbot-moni',
+    serviceName: 'openclaw-moni',
     port: 19002,
     emoji: '💒',
     description: 'Wedding planner assistant',
-    workspace: '/home/ankyr/.clawdbot-soul2',
+    workspace: '/home/ankyr/.openclaw-soul2',
     chatPath: '/chat/moni',
   },
 ];

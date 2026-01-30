@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Only allow known services
-  const allowedServices = ['clawdbot-bernard', 'clawdbot-moni'];
+  const allowedServices = ['openclaw-bernard', 'openclaw-moni', 'openclaw-bogi'];
   if (!allowedServices.includes(service)) {
     return NextResponse.json({ error: 'Unknown service' }, { status: 400 });
   }

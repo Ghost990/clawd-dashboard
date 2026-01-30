@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { exec } from 'child_process';
 
-export async function POST() {
-  return new Promise((resolve) => {
+export async function POST(): Promise<NextResponse> {
+  return new Promise<NextResponse>((resolve) => {
     // RustDesk needs DISPLAY for GUI
     const env = { ...process.env, DISPLAY: ':0' };
     
@@ -21,8 +21,8 @@ export async function POST() {
   });
 }
 
-export async function GET() {
-  return new Promise((resolve) => {
+export async function GET(): Promise<NextResponse> {
+  return new Promise<NextResponse>((resolve) => {
     exec('pgrep -f "rustdesk"', (error, stdout) => {
       const running = !error && stdout.trim().length > 0;
       resolve(NextResponse.json({ running }));
