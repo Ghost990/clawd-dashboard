@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import { BotControlCard } from '@/components/dashboard/BotControlCard';
 import { MiniMetrics } from '@/components/dashboard/MiniMetrics';
 
@@ -23,6 +26,29 @@ const bots = [
 ];
 
 export default function Home() {
+  const [rustdeskLoading, setRustdeskLoading] = useState(false);
+  const [rustdeskStatus, setRustdeskStatus] = useState<string | null>(null);
+
+  const launchRustdesk = async () => {
+    setRustdeskLoading(true);
+    setRustdeskStatus(null);
+    try {
+      const res = await fetch('/api/rustdesk', { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        setRustdeskStatus('✓ Started');
+      } else {
+        setRustdeskStatus(`✗ ${data.error}`);
+      }
+    } catch (e) {
+      setRustdeskStatus('✗ Failed to connect');
+    } finally {
+      setRustdeskLoading(false);
+      // Clear status after 3 seconds
+      setTimeout(() => setRustdeskStatus(null), 3000);
+    }
+  };
+
   return (
     <div className="p-8 max-w-7xl mx-auto">
       {/* Header */}
@@ -73,6 +99,22 @@ export default function Home() {
               <button className="btn-control btn-secondary w-full justify-start opacity-50 cursor-not-allowed">
                 📊 View Logs
               </button>
+              <button 
+                onClick={launchRustdesk}
+                disabled={rustdeskLoading}
+                className="btn-control btn-primary w-full justify-start"
+              >
+                {rustdeskLoading ? (
+                  <>🔄 Starting...</>
+                ) : (
+                  <>🖥️ Remote Access (RustDesk)</>
+                )}
+              </button>
+              {rustdeskStatus && (
+                <p className={`text-xs mt-1 ${rustdeskStatus.startsWith('✓') ? 'text-green-400' : 'text-red-400'}`}>
+                  {rustdeskStatus}
+                </p>
+              )}
             </div>
           </div>
 
