@@ -227,6 +227,78 @@ function MiniMetricsBar() {
   );
 }
 
+function ActionButtons() {
+  const [restartingAll, setRestartingAll] = useState(false);
+  const [updating, setUpdating] = useState(false);
+  const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
+  const handleRestartAll = async () => {
+    if (!confirm('Restart all OpenClaw services?')) return;
+    
+    setRestartingAll(true);
+    setStatus(null);
+    try {
+      const res = await fetch('/api/bot-action?action=restart-all', { method: 'POST' });
+      const data = await res.json();
+      if (data.ok) {
+        setStatus({ type: 'success', message: 'All services restarted!' });
+      } else {
+        setStatus({ type: 'error', message: data.error || 'Failed to restart' });
+      }
+    } catch {
+      setStatus({ type: 'error', message: 'Request failed' });
+    } finally {
+      setRestartingAll(false);
+      setTimeout(() => setStatus(null), 5000);
+    }
+  };
+
+  const handleUpdateOpenClaw = async () => {
+    if (!confirm('Update OpenClaw? This may take a minute.')) return;
+    
+    setUpdating(true);
+    setStatus(null);
+    try {
+      const res = await fetch('/api/bot-action?action=update-openclaw', { method: 'POST' });
+      const data = await res.json();
+      if (data.ok) {
+        setStatus({ type: 'success', message: 'OpenClaw updated!' });
+      } else {
+        setStatus({ type: 'error', message: data.error || 'Update failed' });
+      }
+    } catch {
+      setStatus({ type: 'error', message: 'Request failed' });
+    } finally {
+      setUpdating(false);
+      setTimeout(() => setStatus(null), 5000);
+    }
+  };
+
+  return (
+    <div className="action-buttons">
+      <button 
+        onClick={handleRestartAll} 
+        disabled={restartingAll || updating}
+        className="action-button restart-all"
+      >
+        {restartingAll ? '🔄 Restarting...' : '🔁 Restart All'}
+      </button>
+      <button 
+        onClick={handleUpdateOpenClaw} 
+        disabled={restartingAll || updating}
+        className="action-button update-openclaw"
+      >
+        {updating ? '⏳ Updating...' : '⬆️ Update OpenClaw'}
+      </button>
+      {status && (
+        <span className={`action-status ${status.type}`}>
+          {status.type === 'success' ? '✓' : '✗'} {status.message}
+        </span>
+      )}
+    </div>
+  );
+}
+
 export function BotCards() {
   const bots: BotCardProps[] = [
     {
@@ -266,6 +338,7 @@ export function BotCards() {
         ))}
       </div>
       <MiniMetricsBar />
+      <ActionButtons />
     </div>
   );
 }
