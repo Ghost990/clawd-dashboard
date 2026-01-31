@@ -114,8 +114,8 @@ export function BotCards() {
       description: 'Creative companion - ideas, fun, emotional support',
     },
     {
-      name: 'bogi',
-      displayName: 'Bogi',
+      name: 'lulu',
+      displayName: 'Lulu',
       color: '#a78bfa',
       port: 19003,
       description: 'Personal assistant for Bogi',
