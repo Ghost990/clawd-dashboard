@@ -64,7 +64,7 @@ export function GlassOverlay({
   return (
     <div
       ref={overlayRef}
-      className={`fixed inset-0 z-50 ${positionClasses[position]}`}
+      className={`fixed inset-0 z-[250] ${positionClasses[position]}`}
       style={{ display: 'none', opacity: 0 }}
       onClick={(e) => {
         if (e.target === overlayRef.current) onClose();

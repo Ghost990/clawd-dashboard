@@ -73,24 +73,13 @@ export default function Home() {
     <div className="robot-home">
       {/* Full screen robot background */}
       <div className="robot-container">
-        <RobotFace className="robot-face-centered" />
+        <RobotFace 
+          className="robot-face-centered" 
+          lookAt={showBots || showMetrics || showQuickActions ? 'right' : 'center'}
+        />
       </div>
 
-      {/* Ambient particles */}
-      <div className="ambient-particles">
-        {[...Array(20)].map((_, i) => (
-          <div
-            key={i}
-            className="particle"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 5}s`,
-              animationDuration: `${3 + Math.random() * 4}s`,
-            }}
-          />
-        ))}
-      </div>
+      {/* Ambient particles - removed to fix hydration */}
 
       {/* Brand */}
       <div className="fixed top-6 left-6 z-30">
