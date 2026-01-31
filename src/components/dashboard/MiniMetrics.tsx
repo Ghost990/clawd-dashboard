@@ -36,8 +36,9 @@ export function MiniMetrics() {
 
   useEffect(() => {
     fetchMetrics();
-    const interval = setInterval(fetchMetrics, 5000);
-    return () => clearInterval(interval);
+    // Auto-refresh disabled to prevent robot face reset
+    // const interval = setInterval(fetchMetrics, 5000);
+    // return () => clearInterval(interval);
   }, [fetchMetrics]);
 
   if (!metrics) {
@@ -57,9 +58,18 @@ export function MiniMetrics() {
 
   return (
     <div className="glass rounded-2xl p-5 animate-slide-up">
-      <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-        <span>📊</span> System Resources
-      </h3>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-2">
+          <span>📊</span> System Resources
+        </h3>
+        <button 
+          onClick={fetchMetrics}
+          className="text-cyan-400 hover:text-cyan-300 transition-colors"
+          title="Refresh"
+        >
+          🔄
+        </button>
+      </div>
       
       <div className="space-y-4 stagger-children">
         {/* CPU */}
