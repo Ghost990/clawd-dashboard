@@ -146,23 +146,31 @@ function BotCard({ name, displayName, color, port, service, description, workspa
 }
 
 function MiniMetricsBar() {
-  const [metrics, setMetrics] = useState<{cpu?: number; memory?: number; disk?: number} | null>(null);
+  const [metrics, setMetrics] = useState<{cpu?: number; memory?: number; disk?: number; temp?: number} | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const fetchMetrics = async () => {
+    try {
+      const res = await fetch('/api/metrics');
+      const data = await res.json();
+      setMetrics({
+        cpu: data.cpu?.usage,
+        memory: data.memory?.usagePercent,
+        disk: data.disks?.[0]?.usagePercent,
+        temp: data.cpu?.temperature,
+      });
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await fetchMetrics();
+    setTimeout(() => setIsRefreshing(false), 500);
+  };
 
   useEffect(() => {
-    const fetchMetrics = async () => {
-      try {
-        const res = await fetch('/api/metrics');
-        const data = await res.json();
-        setMetrics({
-          cpu: data.cpu?.usage,
-          memory: data.memory?.usedPercent,
-          disk: data.disk?.usedPercent,
-        });
-      } catch {
-        // ignore
-      }
-    };
-
     fetchMetrics();
     const interval = setInterval(fetchMetrics, 5000);
     return () => clearInterval(interval);
@@ -186,6 +194,21 @@ function MiniMetricsBar() {
         </div>
         <span className="mini-metric-value">{metrics.memory?.toFixed(0) || 0}%</span>
       </div>
+      {metrics.temp !== undefined && (
+        <div className="mini-metric">
+          <span className="mini-metric-label">TEMP</span>
+          <div className="mini-metric-bar">
+            <div 
+              className="mini-metric-fill" 
+              style={{ 
+                width: `${Math.min(100, (metrics.temp / 100) * 100)}%`,
+                background: metrics.temp > 70 ? 'linear-gradient(90deg, #ff6b6b, #ee5a5a)' : undefined
+              }} 
+            />
+          </div>
+          <span className="mini-metric-value">{metrics.temp?.toFixed(0)}°C</span>
+        </div>
+      )}
       <div className="mini-metric">
         <span className="mini-metric-label">Disk</span>
         <div className="mini-metric-bar">
@@ -193,6 +216,13 @@ function MiniMetricsBar() {
         </div>
         <span className="mini-metric-value">{metrics.disk?.toFixed(0) || 0}%</span>
       </div>
+      <button 
+        onClick={handleRefresh}
+        className={`refresh-button ${isRefreshing ? 'spinning' : ''}`}
+        title="Refresh metrics"
+      >
+        🔄
+      </button>
     </div>
   );
 }
@@ -222,8 +252,8 @@ export function BotCards() {
       displayName: 'Lulu',
       color: '#a78bfa',
       port: 19003,
-      service: 'clawdbot-bogi',
-      workspace: '~/clawd-bogi',
+      service: 'openclaw-bogi',
+      workspace: '~/openclaw-bogi',
       description: 'Personal assistant for Bogi',
     },
   ];
