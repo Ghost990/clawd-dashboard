@@ -6,8 +6,12 @@ import { GlassOverlay } from '@/components/overlay/GlassOverlay';
 import { FloatingControls } from '@/components/controls/FloatingControls';
 import { BotsPanel } from '@/components/panels/BotsPanel';
 import { MiniMetrics } from '@/components/dashboard/MiniMetrics';
+import { BotCards } from '@/components/dashboard/BotCards';
+
+type ViewMode = 'screensaver' | 'dashboard';
 
 export default function Home() {
+  const [viewMode, setViewMode] = useState<ViewMode>('screensaver');
   const [showBots, setShowBots] = useState(false);
   const [showMetrics, setShowMetrics] = useState(false);
   const [showQuickActions, setShowQuickActions] = useState(false);
@@ -71,15 +75,40 @@ export default function Home() {
 
   return (
     <div className="robot-home">
-      {/* Full screen robot background */}
-      <div className="robot-container">
-        <RobotFace 
-          className="robot-face-centered" 
-          lookAt={showBots || showMetrics || showQuickActions ? 'right' : 'center'}
-        />
+      {/* View Toggle */}
+      <div className="view-toggle">
+        <button 
+          className={viewMode === 'screensaver' ? 'active' : ''}
+          onClick={() => setViewMode('screensaver')}
+        >
+          🤖 Screensaver
+        </button>
+        <button 
+          className={viewMode === 'dashboard' ? 'active' : ''}
+          onClick={() => setViewMode('dashboard')}
+        >
+          📊 Dashboard
+        </button>
       </div>
 
-      {/* Ambient particles - removed to fix hydration */}
+      {viewMode === 'screensaver' ? (
+        <div className="screensaver-view">
+          {/* Full screen robot background */}
+          <div className="robot-container">
+            <RobotFace 
+              className="robot-face-centered" 
+              lookAt={showBots || showMetrics || showQuickActions ? 'right' : 'center'}
+            />
+          </div>
+
+          {/* Floating controls only in screensaver */}
+          <FloatingControls buttons={controlButtons} position="bottom-right" />
+        </div>
+      ) : (
+        <div className="dashboard-view">
+          <BotCards />
+        </div>
+      )}
 
       {/* Brand */}
       <div className="fixed top-6 left-6 z-30">
@@ -88,9 +117,6 @@ export default function Home() {
         </h1>
         <p className="text-xs text-zinc-500">Control Center</p>
       </div>
-
-      {/* Floating controls */}
-      <FloatingControls buttons={controlButtons} position="bottom-right" />
 
       {/* Bot Panel Overlay */}
       <GlassOverlay
