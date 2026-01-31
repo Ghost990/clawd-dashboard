@@ -10,7 +10,7 @@ gsap.registerPlugin(useGSAP);
 // MOOD & BEHAVIOR SYSTEM
 // ============================================
 
-type Mood = 'neutral' | 'happy' | 'curious' | 'sleepy' | 'angry' | 'surprised' | 'suspicious' | 'love';
+type Mood = 'neutral' | 'happy' | 'curious' | 'sleepy' | 'angry' | 'surprised' | 'suspicious' | 'love' | 'confused' | 'excited' | 'bored' | 'focused' | 'mischievous';
 
 interface MoodStyle {
   eyelidScaleY: number;
@@ -93,6 +93,51 @@ const MOOD_STYLES: Record<Mood, MoodStyle> = {
     leftEyeSkewY: -5,
     rightEyeSkewY: 5,
     eyeRadius: '50%',
+    glowIntensity: 1.4,
+  },
+  confused: {
+    eyelidScaleY: 0.2,
+    eyeScaleX: 1,
+    eyeScaleY: 1,
+    leftEyeSkewY: 8,
+    rightEyeSkewY: -5,
+    eyeRadius: '20px',
+    glowIntensity: 1,
+  },
+  excited: {
+    eyelidScaleY: 0,
+    eyeScaleX: 1.15,
+    eyeScaleY: 1.2,
+    leftEyeSkewY: 0,
+    rightEyeSkewY: 0,
+    eyeRadius: '25px',
+    glowIntensity: 1.6,
+  },
+  bored: {
+    eyelidScaleY: 0.4,
+    eyeScaleX: 1,
+    eyeScaleY: 0.8,
+    leftEyeSkewY: 0,
+    rightEyeSkewY: 0,
+    eyeRadius: '18px',
+    glowIntensity: 0.7,
+  },
+  focused: {
+    eyelidScaleY: 0.2,
+    eyeScaleX: 0.95,
+    eyeScaleY: 0.9,
+    leftEyeSkewY: 0,
+    rightEyeSkewY: 0,
+    eyeRadius: '18px',
+    glowIntensity: 1.2,
+  },
+  mischievous: {
+    eyelidScaleY: 0.35,
+    eyeScaleX: 1,
+    eyeScaleY: 0.9,
+    leftEyeSkewY: -10,
+    rightEyeSkewY: 0,
+    eyeRadius: '20px',
     glowIntensity: 1.3,
   },
 };
@@ -141,25 +186,80 @@ export function RobotFace({ className = '', lookAt = 'center' }: RobotFaceProps)
   // BLINK ANIMATION
   // ============================================
   const blink = useCallback((isWink = false, winkSide: 'left' | 'right' = 'left') => {
-    if (!leftEyelidRef.current || !rightEyelidRef.current) return;
-
-    const targets = isWink 
-      ? (winkSide === 'left' ? [leftEyelidRef.current] : [rightEyelidRef.current])
-      : [leftEyelidRef.current, rightEyelidRef.current];
+    if (!leftEyelidRef.current || !rightEyelidRef.current || !leftEyeRef.current || !rightEyeRef.current) return;
 
     const currentStyle = MOOD_STYLES[currentMood];
     
-    gsap.timeline()
-      .to(targets, {
+    if (isWink) {
+      // Enhanced wink: longer duration, other eye squints
+      const winkingEyelid = winkSide === 'left' ? leftEyelidRef.current : rightEyelidRef.current;
+      const otherEyelid = winkSide === 'left' ? rightEyelidRef.current : leftEyelidRef.current;
+      const otherEye = winkSide === 'left' ? rightEyeRef.current : leftEyeRef.current;
+      
+      const tl = gsap.timeline();
+      
+      // Anticipation - slight squint before wink
+      tl.to(winkingEyelid, {
+        scaleY: 0.3,
+        duration: 0.05,
+        ease: 'power1.in',
+      })
+      // Main wink - close winking eye
+      .to(winkingEyelid, {
         scaleY: 1,
-        duration: 0.08,
+        duration: 0.1,
         ease: 'power2.in',
       })
-      .to(targets, {
-        scaleY: currentStyle.eyelidScaleY,
-        duration: 0.12,
+      // Other eye squints slightly
+      .to(otherEyelid, {
+        scaleY: currentStyle.eyelidScaleY + 0.3,
+        duration: 0.1,
         ease: 'power2.out',
+      }, '<')
+      .to(otherEye, {
+        scaleY: 0.9,
+        duration: 0.1,
+        ease: 'power2.out',
+      }, '<')
+      // Hold the wink longer
+      .to({}, { duration: 0.35 })
+      // Open winking eye with follow-through
+      .to(winkingEyelid, {
+        scaleY: currentStyle.eyelidScaleY - 0.1,
+        duration: 0.15,
+        ease: 'power2.out',
+      })
+      // Return other eye to normal
+      .to(otherEyelid, {
+        scaleY: currentStyle.eyelidScaleY,
+        duration: 0.15,
+        ease: 'power2.out',
+      }, '<')
+      .to(otherEye, {
+        scaleY: currentStyle.eyeScaleY,
+        duration: 0.15,
+        ease: 'power2.out',
+      }, '<')
+      // Settle to normal
+      .to(winkingEyelid, {
+        scaleY: currentStyle.eyelidScaleY,
+        duration: 0.1,
+        ease: 'sine.out',
       });
+    } else {
+      // Normal blink
+      gsap.timeline()
+        .to([leftEyelidRef.current, rightEyelidRef.current], {
+          scaleY: 1,
+          duration: 0.08,
+          ease: 'power2.in',
+        })
+        .to([leftEyelidRef.current, rightEyelidRef.current], {
+          scaleY: currentStyle.eyelidScaleY,
+          duration: 0.12,
+          ease: 'power2.out',
+        });
+    }
   }, [currentMood]);
 
   // ============================================
