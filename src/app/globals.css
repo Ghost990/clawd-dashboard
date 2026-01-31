@@ -241,6 +241,7 @@ body {
   inset: 0;
   background: var(--bg-dark);
   overflow: hidden;
+  z-index: 100;
 }
 
 .robot-container {
