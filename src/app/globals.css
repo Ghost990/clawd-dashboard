@@ -435,6 +435,78 @@ body {
   }
 }
 
+/* Tongue */
+.tongue {
+  position: fixed;
+  top: calc(50% + 80px);
+  left: 50%;
+  transform: translateX(-50%);
+  animation: tongue-appear 0.3s ease-out, tongue-wiggle 0.5s ease-in-out infinite 0.3s;
+  z-index: 5;
+}
+
+@keyframes tongue-appear {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) scaleY(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) scaleY(1);
+  }
+}
+
+@keyframes tongue-wiggle {
+  0%, 100% {
+    transform: translateX(-50%) rotate(-3deg);
+  }
+  50% {
+    transform: translateX(-50%) rotate(3deg);
+  }
+}
+
+/* Music Notes */
+.music-notes {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 30px;
+  z-index: 10;
+}
+
+.note {
+  font-size: 3rem;
+  color: #00e5ff;
+  filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.8));
+  animation: note-float 1s ease-in-out infinite;
+}
+
+.note-1 {
+  animation-delay: 0s;
+}
+
+.note-2 {
+  animation-delay: 0.2s;
+  font-size: 3.5rem;
+}
+
+.note-3 {
+  animation-delay: 0.4s;
+}
+
+@keyframes note-float {
+  0%, 100% {
+    transform: translateY(0) rotate(-10deg);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-20px) rotate(10deg);
+    opacity: 0.7;
+  }
+}
+
 .mood-dot {
   width: 12px;
   height: 12px;

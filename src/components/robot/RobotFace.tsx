@@ -123,6 +123,8 @@ export function RobotFace({ className = '', lookAt = 'center' }: RobotFaceProps)
   const [currentMood, setCurrentMood] = useState<Mood>('neutral');
   const [showSweatDrop, setShowSweatDrop] = useState(false);
   const [showAngerVein, setShowAngerVein] = useState(false);
+  const [showTongue, setShowTongue] = useState(false);
+  const [showMusicNotes, setShowMusicNotes] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [isEyeHovered, setIsEyeHovered] = useState(false);
   
@@ -505,6 +507,114 @@ export function RobotFace({ className = '', lookAt = 'center' }: RobotFaceProps)
   }, [mounted, lookAt]);
 
   // ============================================
+  // PLAYFUL BEHAVIORS (silly/fun animations)
+  // ============================================
+  const doPlayfulAction = useCallback(() => {
+    if (!mounted || !leftEyeRef.current || !rightEyeRef.current) return;
+
+    const actions = ['tongue', 'sing', 'wiggle', 'crossEyes', 'winkWink', 'spinLook'];
+    const action = actions[Math.floor(Math.random() * actions.length)];
+
+    switch (action) {
+      case 'tongue':
+        // Stick out tongue briefly
+        setShowTongue(true);
+        setCurrentMood('happy');
+        setTimeout(() => {
+          setShowTongue(false);
+          setCurrentMood('neutral');
+        }, 2000);
+        break;
+
+      case 'sing':
+        // Show music notes, happy eyes
+        setShowMusicNotes(true);
+        setCurrentMood('happy');
+        // Wiggle eyes while singing
+        gsap.to([leftEyeRef.current, rightEyeRef.current], {
+          y: -5,
+          duration: 0.2,
+          yoyo: true,
+          repeat: 5,
+          ease: 'sine.inOut',
+        });
+        setTimeout(() => {
+          setShowMusicNotes(false);
+          setCurrentMood('neutral');
+        }, 3000);
+        break;
+
+      case 'wiggle':
+        // Silly wiggle
+        gsap.to([leftEyeRef.current, rightEyeRef.current], {
+          rotation: 5,
+          duration: 0.1,
+          yoyo: true,
+          repeat: 7,
+          ease: 'sine.inOut',
+          onComplete: () => {
+            gsap.set([leftEyeRef.current, rightEyeRef.current], { rotation: 0 });
+          },
+        });
+        break;
+
+      case 'crossEyes':
+        // Cross eyes briefly
+        gsap.to(leftEyeRef.current, { x: 15, duration: 0.3 });
+        gsap.to(rightEyeRef.current, { x: -15, duration: 0.3 });
+        setTimeout(() => {
+          gsap.to([leftEyeRef.current, rightEyeRef.current], {
+            x: 0,
+            duration: 0.3,
+          });
+        }, 1500);
+        break;
+
+      case 'winkWink':
+        // Double wink (alternating)
+        blink(true, 'left');
+        setTimeout(() => blink(true, 'right'), 400);
+        setTimeout(() => blink(true, 'left'), 800);
+        break;
+
+      case 'spinLook':
+        // Look around in a circle
+        const timeline = gsap.timeline();
+        timeline
+          .to([leftEyeRef.current, rightEyeRef.current], { x: 20, y: 0, duration: 0.3 })
+          .to([leftEyeRef.current, rightEyeRef.current], { x: 20, y: -15, duration: 0.3 })
+          .to([leftEyeRef.current, rightEyeRef.current], { x: 0, y: -15, duration: 0.3 })
+          .to([leftEyeRef.current, rightEyeRef.current], { x: -20, y: -15, duration: 0.3 })
+          .to([leftEyeRef.current, rightEyeRef.current], { x: -20, y: 0, duration: 0.3 })
+          .to([leftEyeRef.current, rightEyeRef.current], { x: 0, y: 0, duration: 0.3 });
+        break;
+    }
+  }, [mounted, blink]);
+
+  // Schedule playful behaviors (rare, random)
+  useEffect(() => {
+    if (!mounted) return;
+
+    const schedulePlayful = () => {
+      // Random interval: 45-120 seconds
+      const delay = randomRange(45000, 120000);
+      return setTimeout(() => {
+        // Only play if in neutral or happy mood
+        if (currentMood === 'neutral' || currentMood === 'happy') {
+          doPlayfulAction();
+        }
+        playfulTimerRef.current = schedulePlayful();
+      }, delay);
+    };
+
+    const playfulTimerRef = { current: schedulePlayful() };
+
+    return () => {
+      clearTimeout(playfulTimerRef.current);
+    };
+  }, [mounted, currentMood, doPlayfulAction]);
+
+  // ============================================
   // EYE HOVER EFFECT (scared/surprised)
   // ============================================
   useEffect(() => {
@@ -618,6 +728,26 @@ export function RobotFace({ className = '', lookAt = 'center' }: RobotFaceProps)
             />
             <circle cx="20" cy="20" r="3" fill="rgba(0, 229, 255, 0.9)" />
           </svg>
+        </div>
+      )}
+
+      {/* Tongue */}
+      {showTongue && (
+        <div className="tongue">
+          <svg viewBox="0 0 60 40" className="w-16 h-10">
+            <ellipse cx="30" cy="20" rx="25" ry="18" fill="#ff6b9d" />
+            <ellipse cx="30" cy="15" rx="20" ry="12" fill="#ff8fb3" />
+            <path d="M30 5 L30 35" stroke="#ff5588" strokeWidth="3" strokeLinecap="round" />
+          </svg>
+        </div>
+      )}
+
+      {/* Music Notes */}
+      {showMusicNotes && (
+        <div className="music-notes">
+          <span className="note note-1">♪</span>
+          <span className="note note-2">♫</span>
+          <span className="note note-3">♪</span>
         </div>
       )}
 
