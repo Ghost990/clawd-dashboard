@@ -214,7 +214,7 @@ export function BotCards() {
       color: '#ff6b9d',
       port: 19002,
       service: 'openclaw-moni',
-      workspace: '~/moni',
+      workspace: '~/clawd-soul2',
       description: 'Creative companion - ideas, fun, emotional support',
     },
     {
@@ -222,8 +222,8 @@ export function BotCards() {
       displayName: 'Lulu',
       color: '#a78bfa',
       port: 19003,
-      service: 'openclaw-lulu',
-      workspace: '~/lulu',
+      service: 'clawdbot-bogi',
+      workspace: '~/clawd-bogi',
       description: 'Personal assistant for Bogi',
     },
   ];
