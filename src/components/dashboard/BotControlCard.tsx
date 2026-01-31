@@ -11,6 +11,7 @@ interface BotControlCardProps {
   description: string;
   workspace: string;
   chatPath: string;
+  compact?: boolean;
 }
 
 interface BotStatus {
@@ -21,7 +22,7 @@ interface BotStatus {
   skills?: string[];
 }
 
-export function BotControlCard({ name, serviceName, port, emoji, description, workspace, chatPath }: BotControlCardProps) {
+export function BotControlCard({ name, serviceName, port, emoji, description, workspace, chatPath, compact = false }: BotControlCardProps) {
   const [status, setStatus] = useState<BotStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
@@ -53,6 +54,38 @@ export function BotControlCard({ name, serviceName, port, emoji, description, wo
       setTimeout(() => setActionLoading(null), 2000);
     }
   };
+
+  if (compact) {
+    return (
+      <div className="bg-white/5 rounded-xl p-4 border border-white/10 hover:border-white/20 transition-all">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-xl">
+              {emoji}
+            </div>
+            <div>
+              <h3 className="font-bold text-white text-sm">{name}</h3>
+              <p className="text-zinc-500 text-xs">{description}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className={`w-2 h-2 rounded-full ${status?.active ? 'bg-green-400' : 'bg-red-400'}`}></span>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <Link href={chatPath} className="btn-control btn-primary flex-1 text-xs py-2">
+            💬 Chat
+          </Link>
+          <button onClick={() => handleAction('restart')} disabled={actionLoading !== null} className="btn-control btn-secondary text-xs py-2 px-3">
+            🔄
+          </button>
+          <button onClick={() => handleAction(status?.active ? 'stop' : 'start')} disabled={actionLoading !== null} className={`btn-control text-xs py-2 px-3 ${status?.active ? 'btn-danger' : 'btn-secondary'}`}>
+            {status?.active ? '⏹️' : '▶️'}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="glass rounded-2xl p-6 gradient-border animate-slide-up">

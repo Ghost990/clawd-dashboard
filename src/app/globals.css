@@ -227,3 +227,115 @@ body {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+/* Custom scrollbar for panels */
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(139, 92, 246, 0.3); }
+
+/* ==================== */
+/* Robot Face Home Page */
+/* ==================== */
+
+.robot-home {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-dark);
+  overflow: hidden;
+}
+
+.robot-container {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.robot-face-centered {
+  width: 100%;
+  max-width: 700px;
+  height: auto;
+  padding: 2rem;
+}
+
+/* Ambient particles */
+.ambient-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(139, 92, 246, 0.4);
+  border-radius: 50%;
+  animation: float-particle linear infinite;
+}
+
+@keyframes float-particle {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0);
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(-20px) scale(1);
+  }
+  90% {
+    opacity: 0.5;
+    transform: translateY(-100px) scale(0.8);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-120px) scale(0);
+  }
+}
+
+/* Glassmorphism overlay */
+.glass-overlay {
+  background: rgba(15, 15, 20, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(139, 92, 246, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  min-width: 320px;
+}
+
+/* Glow effect for active elements */
+.drop-shadow-glow {
+  filter: drop-shadow(0 0 8px var(--clawd-glow));
+}
+
+/* Robot face specific */
+.robot-face {
+  position: relative;
+}
+
+/* Gradient background for robot */
+.robot-home::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(ellipse 100% 80% at 50% 30%, rgba(139, 92, 246, 0.08), transparent 60%),
+    radial-gradient(ellipse 80% 60% at 20% 80%, rgba(6, 182, 212, 0.05), transparent 50%),
+    radial-gradient(ellipse 60% 50% at 80% 70%, rgba(139, 92, 246, 0.05), transparent 50%);
+  pointer-events: none;
+}
+
+/* Vignette */
+.robot-home::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.4) 100%);
+  pointer-events: none;
+}
