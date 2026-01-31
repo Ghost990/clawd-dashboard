@@ -41,8 +41,9 @@ export function BotControlCard({ name, serviceName, port, emoji, description, wo
 
   useEffect(() => {
     fetchStatus();
-    const interval = setInterval(fetchStatus, 5000);
-    return () => clearInterval(interval);
+    // Auto-refresh disabled - use manual refresh button
+    // const interval = setInterval(fetchStatus, 5000);
+    // return () => clearInterval(interval);
   }, [serviceName]);
 
   const handleAction = async (action: 'restart' | 'stop' | 'start') => {
@@ -76,6 +77,9 @@ export function BotControlCard({ name, serviceName, port, emoji, description, wo
           <Link href={chatPath} className="btn-control btn-primary flex-1 text-xs py-2">
             💬 Chat
           </Link>
+          <button onClick={fetchStatus} className="btn-control btn-secondary text-xs py-2 px-3" title="Refresh status">
+            🔃
+          </button>
           <button onClick={() => handleAction('restart')} disabled={actionLoading !== null} className="btn-control btn-secondary text-xs py-2 px-3">
             🔄
           </button>
