@@ -1128,6 +1128,96 @@ body {
   }
 }
 
+/* Skills tags */
+.bot-card-skills {
+  margin-bottom: 16px;
+}
+
+.skills-label {
+  display: block;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.skills-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.skill-tag {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.skill-tag.more {
+  opacity: 0.6;
+}
+
+/* Dashboard content wrapper */
+.dashboard-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  padding-bottom: 40px;
+}
+
+/* Mini Metrics Bar */
+.mini-metrics-bar {
+  display: flex;
+  gap: 40px;
+  padding: 16px 32px;
+  background: rgba(20, 20, 25, 0.8);
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+}
+
+.mini-metric {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mini-metric-label {
+  font-size: 11px;
+  color: rgba(0, 229, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  min-width: 35px;
+}
+
+.mini-metric-bar {
+  width: 80px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.mini-metric-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00e5ff, #00b8cc);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+.mini-metric-value {
+  font-size: 12px;
+  color: #00e5ff;
+  font-family: monospace;
+  min-width: 35px;
+  text-align: right;
+}
+
 /* Responsive cards */
 @media (max-width: 1100px) {
   .bot-cards-container {
@@ -1138,5 +1228,10 @@ body {
   .bot-card {
     width: 100%;
     max-width: 400px;
+  }
+  
+  .mini-metrics-bar {
+    flex-direction: column;
+    gap: 12px;
   }
 }
